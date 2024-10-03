@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/anngr/OneDrive/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B/BS3/PMLDL/MLOps/mlruns/0/1f7452bea2354edba73fb58e1ef6540c/artifacts
+end_time: 1727985285025
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 1f7452bea2354edba73fb58e1ef6540c
+run_name: carefree-bear-613
+run_uuid: 1f7452bea2354edba73fb58e1ef6540c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1727985277962
+status: 3
+tags: []
+user_id: anngr

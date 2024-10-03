@@ -1,44 +1,31 @@
 import pandas as pd
+import mlflow
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 import pickle
-from sklearn.preprocessing import StandardScaler
 
-def data_prep(data):
-    data.columns = data.columns.str.strip()
-    data = data.map(lambda x: x.strip() if isinstance(x, str) else x)
+def train_and_evaluate():
+    train_data = pd.read_csv('data/processed/train.csv')
+    test_data = pd.read_csv('data/processed/test.csv')
+    
+    X_train = train_data.drop('loan_status', axis=1)
+    y_train = train_data['loan_status']
 
-    data.drop(columns=['loan_id'], inplace=True)
-    data['education'] = data['education'].map({'Graduate': 1, 'Not Graduate': 0})
-    data['self_employed'] = data['self_employed'].map({'Yes': 1, 'No': 0})
-    data['loan_status'] = data['loan_status'].map({'Approved': 1, 'Rejected': 0})
+    X_test = test_data.drop('loan_status', axis=1)
+    y_test = test_data['loan_status']
 
-    columns_to_normalize = [
-        'no_of_dependents', 'income_annum', 'loan_amount', 
-        'loan_term', 'cibil_score', 'residential_assets_value', 
-        'commercial_assets_value', 'luxury_assets_value', 
-        'bank_asset_value'
-    ]
+    with mlflow.start_run():
+        model = RandomForestClassifier()
+        model.fit(X_train, y_train)
 
-    scaler = StandardScaler()
-    data[columns_to_normalize] = scaler.fit_transform(data[columns_to_normalize])
+        mlflow.sklearn.log_model(model, "model")
 
-    pickle.dump(scaler, open('MLOps/models/scaler.pkl', 'wb'))
+        pickle.dump(model, open('models/model.pkl', 'wb'))
+        
+        predictions = model.predict(X_test)
+        accuracy = accuracy_score(y_test, predictions)
+        
+        mlflow.log_metric("accuracy", accuracy)
 
-    return data
-
-data = pd.read_csv('MLOps/code/datasets/loan_approval_dataset.csv')
-
-data = data_prep(data)
-
-data.to_csv('MLOps/data/normalized_data.csv', index=False)
-
-X = data.drop('loan_status', axis = 1)
-y = data['loan_status']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-model = RandomForestClassifier()
-model.fit(X_train, y_train)
-
-pickle.dump(model, open('MLOps/models/model.pkl', 'wb'))
+if __name__ == "__main__":
+    train_and_evaluate()

@@ -1,0 +1,15 @@
+pandas
+numpy
+requests
+sqlalchemy
+scikit-learn
+mlflow
+fastapi
+uvicorn
+streamlit
+dvc
+datetime
+requests
+joblib
+python-multipart
+pydantic
